@@ -49,7 +49,7 @@ export function AuthDialogProvider({ children }: { children: React.ReactNode }) 
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>
 						<DialogTitle className="text-2xl font-bold tracking-tight">
-							Welcome to Code Horse
+							Welcome to Code Fox
 						</DialogTitle>
 						<DialogDescription>
 							Sign in with GitHub to start getting AI-powered code reviews on your pull requests.

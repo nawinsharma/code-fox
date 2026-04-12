@@ -16,7 +16,7 @@ export function TestimonialSection() {
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
           See what developers and engineering leaders are saying about
-          AI-powered code reviews with Code Horse.
+          AI-powered code reviews with Code Fox.
         </p>
       </SectionHeader>
       <SocialProofTestimonials testimonials={testimonials} />

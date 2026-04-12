@@ -31,10 +31,10 @@ export const Highlight = ({
 export const BLUR_FADE_DELAY = 0.15;
 
 export const siteConfig = {
-  name: "Code Horse",
+  name: "Code Fox",
   description: "AI-powered code reviews for GitHub.",
   cta: "Get Started",
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://codefox.nawin.xyz",
   keywords: [
     "AI Code Review",
     "GitHub Integration",
@@ -42,11 +42,11 @@ export const siteConfig = {
     "Code Quality",
   ],
   links: {
-    email: "support@codehorse.dev",
-    twitter: "https://twitter.com/codehorse",
-    discord: "https://discord.gg/codehorse",
-    github: "https://github.com/codehorse",
-    instagram: "https://instagram.com/codehorse",
+    email: "support@codefox.dev",
+    twitter: "https://twitter.com/codefox",
+    discord: "https://discord.gg/codefox",
+    github: "https://github.com/codefox",
+    instagram: "https://instagram.com/codefox",
   },
   nav: {
     links: [
@@ -289,13 +289,13 @@ export const siteConfig = {
   featureSection: {
     title: "Connect. Review. Ship.",
     description:
-      "See how Code Horse transforms every pull request into a learning opportunity in four easy steps",
+      "See how Code Fox transforms every pull request into a learning opportunity in four easy steps",
     items: [
       {
         id: 1,
         title: "Connect Your GitHub Repos",
         content:
-          "Install the Code Horse GitHub App and select which repositories to monitor. Setup takes less than a minute.",
+          "Install the Code Fox GitHub App and select which repositories to monitor. Setup takes less than a minute.",
         image:
           "https://images.unsplash.com/photo-1720371300677-ba4838fa0678?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       },
@@ -303,7 +303,7 @@ export const siteConfig = {
         id: 2,
         title: "AI Analyzes Every PR",
         content:
-          "When a pull request is opened, Code Horse deeply analyzes the diff, understands context, and identifies issues.",
+          "When a pull request is opened, Code Fox deeply analyzes the diff, understands context, and identifies issues.",
         image:
           "https://images.unsplash.com/photo-1686170287433-c95faf6d3608?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzfHx8ZW58MHx8fHx8fA%3D%3D",
       },
@@ -319,7 +319,7 @@ export const siteConfig = {
         id: 4,
         title: "Ship with Confidence",
         content:
-          "Merge knowing every change has been reviewed. Code Horse learns your codebase and improves over time.",
+          "Merge knowing every change has been reviewed. Code Fox learns your codebase and improves over time.",
         image:
           "https://images.unsplash.com/photo-1666882990322-e7f3b8df4f75?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D",
       },
@@ -335,7 +335,7 @@ export const siteConfig = {
         content: <FirstBentoAnimation />,
         title: "AI Chat for Code Questions",
         description:
-          "Ask Code Horse about your codebase. Get instant answers about architecture decisions, patterns, and best practices.",
+          "Ask Code Fox about your codebase. Get instant answers about architecture decisions, patterns, and best practices.",
       },
       {
         id: 2,
@@ -363,7 +363,7 @@ export const siteConfig = {
         content: <FourthBentoAnimation once={false} />,
         title: "Custom Review Rules",
         description:
-          "Define your own review rules and coding standards. Code Horse enforces them consistently on every pull request.",
+          "Define your own review rules and coding standards. Code Fox enforces them consistently on every pull request.",
       },
     ],
   },
@@ -692,7 +692,7 @@ export const siteConfig = {
   },
   quoteSection: {
     quote:
-      "Code Horse has completely transformed how our team handles code reviews. What used to take hours of senior engineer time now happens automatically, catching bugs we'd have missed and keeping our codebase clean.",
+      "Code Fox has completely transformed how our team handles code reviews. What used to take hours of senior engineer time now happens automatically, catching bugs we'd have missed and keeping our codebase clean.",
     author: {
       name: "Alex Johnson",
       role: "CTO, Innovatech",
@@ -967,31 +967,31 @@ export const siteConfig = {
   faqSection: {
     title: "Frequently Asked Questions",
     description:
-      "Answers to common questions about Code Horse. If you have other questions, don't hesitate to reach out.",
+      "Answers to common questions about Code Fox. If you have other questions, don't hesitate to reach out.",
     faQitems: [
       {
         id: 1,
-        question: "What is Code Horse?",
+        question: "What is Code Fox?",
         answer:
-          "Code Horse is an AI-powered code review platform that automatically reviews your GitHub pull requests. It catches bugs, security vulnerabilities, and style issues — and leaves comments directly on your PRs, just like a human reviewer.",
+          "Code Fox is an AI-powered code review platform that automatically reviews your GitHub pull requests. It catches bugs, security vulnerabilities, and style issues — and leaves comments directly on your PRs, just like a human reviewer.",
       },
       {
         id: 2,
-        question: "How does Code Horse review my code?",
+        question: "How does Code Fox review my code?",
         answer:
-          "When a pull request is opened or updated, Code Horse analyzes the diff using advanced AI models. It understands the context of changes, identifies potential issues, and posts line-by-line review comments on your PR within seconds.",
+          "When a pull request is opened or updated, Code Fox analyzes the diff using advanced AI models. It understands the context of changes, identifies potential issues, and posts line-by-line review comments on your PR within seconds.",
       },
       {
         id: 3,
         question: "Is my code secure?",
         answer:
-          "Absolutely. Code Horse uses encrypted connections and does not store your source code. All analysis happens in real-time and your code is never used for training. Enterprise customers can also self-host for full control.",
+          "Absolutely. Code Fox uses encrypted connections and does not store your source code. All analysis happens in real-time and your code is never used for training. Enterprise customers can also self-host for full control.",
       },
       {
         id: 4,
         question: "Does it work with my GitHub repositories?",
         answer:
-          "Yes. Code Horse integrates directly with GitHub via a GitHub App. Installation takes under a minute — just select the repos you want reviewed and you're good to go.",
+          "Yes. Code Fox integrates directly with GitHub via a GitHub App. Installation takes under a minute — just select the repos you want reviewed and you're good to go.",
       },
       {
         id: 5,
@@ -1003,7 +1003,7 @@ export const siteConfig = {
         id: 6,
         question: "Can I customize what the AI reviews?",
         answer:
-          "Yes. You can define custom review rules and coding standards. Code Horse will enforce them consistently across all pull requests, ensuring your team's conventions are always followed.",
+          "Yes. You can define custom review rules and coding standards. Code Fox will enforce them consistently across all pull requests, ensuring your team's conventions are always followed.",
       },
     ],
   },

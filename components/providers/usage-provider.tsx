@@ -3,11 +3,11 @@
 import {
 	createContext,
 	useContext,
-	useState,
-	useEffect,
+	useCallback,
 	type ReactNode,
 } from "react";
 import { useSession } from "@/lib/auth-client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface UsageLimits {
 	prs: number;
@@ -44,90 +44,88 @@ interface UsageContextType {
 
 const UsageContext = createContext<UsageContextType | undefined>(undefined);
 
+async function fetchDashboard() {
+	const res = await fetch("/api/dashboard");
+	if (!res.ok) throw new Error("Failed to fetch dashboard");
+	return res.json();
+}
+
+export const DASHBOARD_QUERY_KEY = ["dashboard"] as const;
+
 export function UsageProvider({ children }: { children: ReactNode }) {
 	const { data: session, isPending } = useSession();
-	const [usage, setUsage] = useState<UsageData | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const queryClient = useQueryClient();
 
-	const fetchUsage = async () => {
-		if (isPending) return;
-		if (!session) {
-			setLoading(false);
-			return;
-		}
+	const { data: dashboardData, isLoading, error: queryError } = useQuery({
+		queryKey: DASHBOARD_QUERY_KEY,
+		queryFn: fetchDashboard,
+		enabled: !isPending && !!session,
+	});
 
-		try {
-			setLoading(true);
-			const res = await fetch("/api/dashboard");
-			if (!res.ok) throw new Error("Failed to fetch usage");
-			const data = await res.json();
+	const usage: UsageData | null = dashboardData
+		? {
+				plan: dashboardData.user.plan,
+				prsUsed: dashboardData.user.prsUsed,
+				prsCreated: dashboardData.user.prsCreated,
+				issuesUsed: dashboardData.user.issuesUsed,
+				chatMessagesUsed: dashboardData.user.chatMessagesUsed,
+				billingCycleStart: dashboardData.user.billingCycleStart,
+				githubAccount: dashboardData.stats?.githubAccount || null,
+				limits: dashboardData.limits,
+			}
+		: null;
 
-			setUsage({
-				plan: data.user.plan,
-				prsUsed: data.user.prsUsed,
-				prsCreated: data.user.prsCreated,
-				issuesUsed: data.user.issuesUsed,
-				chatMessagesUsed: data.user.chatMessagesUsed,
-				billingCycleStart: data.user.billingCycleStart,
-				githubAccount: data.stats?.githubAccount || null,
-				limits: data.limits,
-			});
-			setError(null);
-		} catch (err) {
-			console.error("Usage fetch error:", err);
-			setError("Failed to load usage data");
-		} finally {
-			setLoading(false);
-		}
-	};
+	const loading = isPending || isLoading;
 
-	useEffect(() => {
-		fetchUsage();
-	}, [session, isPending]);
+	const refreshUsage = useCallback(async () => {
+		await queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY });
+	}, [queryClient]);
 
-	const canSendMessage = () => {
+	const canSendMessage = useCallback(() => {
 		if (!usage) return false;
 		const limit = usage.limits[usage.plan].chat;
 		return usage.chatMessagesUsed < limit;
-	};
+	}, [usage]);
 
-	const getRemainingMessages = () => {
+	const getRemainingMessages = useCallback(() => {
 		if (!usage) return 0;
 		const limit = usage.limits[usage.plan].chat;
 		return limit - usage.chatMessagesUsed;
-	};
+	}, [usage]);
 
-	const getUsagePercentage = (type: UsageType) => {
-		if (!usage) return 0;
+	const getUsagePercentage = useCallback(
+		(type: UsageType) => {
+			if (!usage) return 0;
 
-		let used: number;
-		let limit: number;
+			let used: number;
+			let limit: number;
 
-		if (type === "prs") {
-			used = usage.prsUsed;
-			limit = usage.limits[usage.plan].prs;
-		} else if (type === "prsCreated") {
-			used = usage.prsCreated;
-			limit = usage.limits[usage.plan].prsCreated;
-		} else if (type === "issues") {
-			used = usage.issuesUsed;
-			limit = usage.limits[usage.plan].issues;
-		} else {
-			used = usage.chatMessagesUsed;
-			limit = usage.limits[usage.plan].chat;
-		}
+			if (type === "prs") {
+				used = usage.prsUsed;
+				limit = usage.limits[usage.plan].prs;
+			} else if (type === "prsCreated") {
+				used = usage.prsCreated;
+				limit = usage.limits[usage.plan].prsCreated;
+			} else if (type === "issues") {
+				used = usage.issuesUsed;
+				limit = usage.limits[usage.plan].issues;
+			} else {
+				used = usage.chatMessagesUsed;
+				limit = usage.limits[usage.plan].chat;
+			}
 
-		return (used / limit) * 100;
-	};
+			return (used / limit) * 100;
+		},
+		[usage],
+	);
 
 	return (
 		<UsageContext.Provider
 			value={{
 				usage,
 				loading,
-				error,
-				refreshUsage: fetchUsage,
+				error: queryError?.message || null,
+				refreshUsage,
 				canSendMessage,
 				getRemainingMessages,
 				getUsagePercentage,

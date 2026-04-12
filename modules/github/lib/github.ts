@@ -185,7 +185,7 @@ export const createWebhook = async (owner: string, repo: string) => {
 };
 
 /**
- * Deletes the Code Horse webhook from a GitHub repository.
+ * Deletes the Code Fox webhook from a GitHub repository.
  *
  * @param owner - Repository owner.
  * @param repo - Repository name.

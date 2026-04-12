@@ -1,17 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
+import { useChat } from "@ai-sdk/react";
 import { Button } from "@/components/ui/button";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import { useUsage } from "@/components/providers/usage-provider";
 import { MessageBubble } from "./_components/message-bubble";
 import { ChatEmptyState } from "./_components/chat-empty-state";
 import Link from "next/link";
-
-interface Message {
-	role: "user" | "assistant";
-	content: string;
-}
 
 const exampleQuestions = [
 	"How is authentication handled?",
@@ -22,60 +18,36 @@ const exampleQuestions = [
 
 export default function ChatPageClient() {
 	const { canSendMessage, getRemainingMessages, refreshUsage } = useUsage();
-	const [messages, setMessages] = useState<Message[]>([]);
-	const [input, setInput] = useState("");
-	const [loading, setLoading] = useState(false);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const inputRef = useRef("");
+
+	const { messages, status, sendMessage } = useChat({
+		onFinish: () => {
+			refreshUsage();
+		},
+		onError: () => {
+			// Error handled by useChat
+		},
+	});
+
+	const isLoading = status === "submitted" || status === "streaming";
 
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages]);
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const onFormSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
+		const text = inputRef.current.trim();
+		if (!text || !canSendMessage()) return;
 
-		const userMessage = input.trim();
-		if (!userMessage) return;
+		sendMessage({ text });
+		inputRef.current = "";
+	};
 
-		if (!canSendMessage()) {
-			setMessages((prev) => [
-				...prev,
-				{
-					role: "assistant",
-					content:
-						"You have reached your message limit. Upgrade to Pro for more messages.",
-				},
-			]);
-			return;
-		}
-
-		setInput("");
-		setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
-		setLoading(true);
-
-		try {
-			const res = await fetch("/api/chat", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ question: userMessage }),
-			});
-
-			const data = await res.json();
-			if (!res.ok) throw new Error(data.error || "Failed to get response");
-
-			setMessages((prev) => [
-				...prev,
-				{ role: "assistant", content: data.answer },
-			]);
-			refreshUsage();
-		} catch {
-			setMessages((prev) => [
-				...prev,
-				{ role: "assistant", content: "Something went wrong. Please try again." },
-			]);
-		} finally {
-			setLoading(false);
-		}
+	const onSelectQuestion = (q: string) => {
+		if (!canSendMessage()) return;
+		sendMessage({ text: q });
 	};
 
 	const canChat = canSendMessage();
@@ -87,25 +59,42 @@ export default function ChatPageClient() {
 					{messages.length === 0 ? (
 						<ChatEmptyState
 							exampleQuestions={exampleQuestions}
-							onSelectQuestion={(q) => setInput(q)}
+							onSelectQuestion={onSelectQuestion}
 						/>
 					) : (
-						messages.map((message, index) => (
-							<MessageBubble key={index} message={message} />
-						))
+						messages.map((message) => {
+							const textContent = message.parts
+								.filter(
+									(p): p is { type: "text"; text: string } =>
+										p.type === "text",
+								)
+								.map((p) => p.text)
+								.join("");
+
+							return (
+								<MessageBubble
+									key={message.id}
+									message={{
+										role: message.role as "user" | "assistant",
+										content: textContent,
+									}}
+								/>
+							);
+						})
 					)}
 
-					{loading && (
-						<div className="flex justify-start">
-							<div className="bg-muted rounded-lg px-4 py-2">
-								<div className="flex gap-1">
-									<span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-									<span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.1s]" />
-									<span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
+					{isLoading &&
+						messages[messages.length - 1]?.role === "user" && (
+							<div className="flex justify-start">
+								<div className="bg-muted rounded-lg px-4 py-2">
+									<div className="flex gap-1">
+										<span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
+										<span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.1s]" />
+										<span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
+									</div>
 								</div>
 							</div>
-						</div>
-					)}
+						)}
 					<div ref={messagesEndRef} />
 				</div>
 			</div>
@@ -124,8 +113,10 @@ export default function ChatPageClient() {
 					) : (
 						<PlaceholdersAndVanishInput
 							placeholders={exampleQuestions}
-							onChange={(e) => setInput(e.target.value)}
-							onSubmit={handleSubmit}
+							onChange={(e) => {
+								inputRef.current = e.target.value;
+							}}
+							onSubmit={onFormSubmit}
 						/>
 					)}
 					{canChat && (
