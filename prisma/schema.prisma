@@ -1,0 +1,168 @@
+
+generator client {
+	provider = "prisma-client"
+	output   = "../lib/generated/prisma"
+}
+
+datasource db {
+	provider = "postgresql"
+}
+
+enum IndexingStatus {
+	NOT_STARTED
+	INDEXING
+	COMPLETED
+	FAILED
+}
+
+model User {
+	id                  String    @id
+	name                String
+	email               String
+	emailVerified       Boolean   @default(false)
+	image               String?
+	createdAt           DateTime  @default(now())
+	updatedAt           DateTime  @updatedAt
+	sessions            Session[]
+	accounts            Account[]
+	repositories        Repository[]
+	usage               UserUsage?
+	rules               Rule[]
+	subscriptionTier    String    @default("FREE")
+	subscriptionStatus  String?
+	polarCustomerId     String?   @unique
+	polarSubscriptionId String?   @unique
+
+	prsUsed             Int       @default(0)
+	prsCreated          Int       @default(0)
+	issuesUsed          Int       @default(0)
+	chatMessagesUsed    Int       @default(0)
+	billingCycleStart   DateTime  @default(now())
+
+	@@unique([email])
+	@@map("user")
+}
+
+model Repository {
+	id             String         @id @default(cuid())
+	githubId       BigInt         @unique
+	name           String
+	owner          String
+	fullName       String
+	url            String
+	userId         String
+	user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+	indexingStatus IndexingStatus @default(NOT_STARTED)
+
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	reviews Review[]
+	issues  Issue[]
+
+	@@index([userId])
+	@@map("repository")
+}
+
+model Review {
+	id           String     @id @default(cuid())
+	repositoryId String
+	repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+	prNumber     Int
+	prTitle      String
+	prUrl        String
+	review       String     @db.Text
+	status       String     @default("pending")
+
+	createdAt    DateTime   @default(now())
+	updatedAt    DateTime   @updatedAt
+
+	@@index([repositoryId])
+	@@map("review")
+}
+
+model Issue {
+	id           String     @id @default(cuid())
+	githubId     BigInt
+	number       Int
+	title        String
+	repositoryId String
+	repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+	analyzedAt   DateTime   @default(now())
+
+	@@index([repositoryId])
+	@@map("issue")
+}
+
+model Rule {
+	id        String   @id @default(cuid())
+	content   String
+	userId    String
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+
+	@@index([userId])
+	@@map("rule")
+}
+
+model UserUsage {
+	id              String @id @default(cuid())
+	userId          String @unique
+	user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+	repositoryCount Int    @default(0)
+	reviewCounts    Json   @default("{}")
+
+	createdAt       DateTime @default(now())
+	updatedAt       DateTime @updatedAt
+
+	@@map("user_usage")
+}
+
+model Session {
+	id        String   @id
+	expiresAt DateTime
+	token     String
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	ipAddress String?
+	userAgent String?
+	userId    String
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+	@@unique([token])
+	@@index([userId])
+	@@map("session")
+}
+
+model Account {
+	id                    String    @id
+	accountId             String
+	providerId            String
+	userId                String
+	user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+	accessToken           String?
+	refreshToken          String?
+	idToken               String?
+	accessTokenExpiresAt  DateTime?
+	refreshTokenExpiresAt DateTime?
+	scope                 String?
+	password              String?
+	createdAt             DateTime  @default(now())
+	updatedAt             DateTime  @updatedAt
+
+	@@index([userId])
+	@@map("account")
+}
+
+model Verification {
+	id         String   @id
+	identifier String
+	value      String
+	expiresAt  DateTime
+	createdAt  DateTime @default(now())
+	updatedAt  DateTime @updatedAt
+
+	@@index([identifier])
+	@@map("verification")
+}
