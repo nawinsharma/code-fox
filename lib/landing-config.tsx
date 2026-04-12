@@ -79,11 +79,9 @@ export const siteConfig = {
     cta: {
       primary: {
         text: "Try for Free",
-        href: "/login",
       },
       secondary: {
         text: "Log in",
-        href: "/login",
       },
     },
   },
@@ -708,7 +706,7 @@ export const siteConfig = {
     pricingItems: [
       {
         name: "Free",
-        href: "/login",
+        href: "#",
         price: "$0",
         period: "month",
         yearlyPrice: "$0",
@@ -725,7 +723,7 @@ export const siteConfig = {
       },
       {
         name: "Pro",
-        href: "/login",
+        href: "#",
         price: "$19",
         period: "month",
         yearlyPrice: "$190",
@@ -1015,7 +1013,7 @@ export const siteConfig = {
     backgroundImage: "/agent-cta-background.png",
     button: {
       text: "Start Reviewing for Free",
-      href: "/login",
+      href: "#",
     },
     subtext: "No credit card required. Cancel anytime.",
   },

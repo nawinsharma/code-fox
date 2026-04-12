@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionHeader } from "@/components/landing/section-header";
+import { useAuthDialog } from "@/components/landing/auth-dialog";
 import { siteConfig } from "@/lib/landing-config";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
@@ -67,6 +68,7 @@ export function PricingSection() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly",
   );
+  const { open: openAuthDialog } = useAuthDialog();
 
   // Update price animation
   const PriceDisplay = ({
@@ -146,6 +148,7 @@ export function PricingSection() {
 
               <div className="flex flex-col gap-2 p-4">
                 <button
+                  onClick={openAuthDialog}
                   className={`h-10 w-full flex items-center justify-center text-sm font-normal tracking-wide rounded-full px-4 cursor-pointer transition-all ease-out active:scale-95 ${
                     tier.isPopular
                       ? `${tier.buttonColor} shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)]`

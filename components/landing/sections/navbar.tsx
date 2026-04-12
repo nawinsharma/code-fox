@@ -3,6 +3,7 @@
 import { Icons } from "@/components/landing/icons";
 import { NavMenu } from "@/components/landing/nav-menu";
 import { ThemeToggle } from "@/components/landing/theme-toggle";
+import { useAuthDialog } from "@/components/landing/auth-dialog";
 import { siteConfig } from "@/lib/landing-config";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
@@ -55,6 +56,7 @@ export function Navbar() {
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const { open: openAuthDialog } = useAuthDialog();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -120,12 +122,12 @@ export function Navbar() {
 
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
               <div className="flex items-center space-x-6">
-                <Link
-                  className="bg-primary h-8 hidden md:flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-primary-foreground w-fit px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12]"
-                  href="/login"
+                <button
+                  className="bg-primary h-8 hidden md:flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-primary-foreground w-fit px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] cursor-pointer"
+                  onClick={openAuthDialog}
                 >
                   Try for free
-                </Link>
+                </button>
               </div>
               <ThemeToggle />
               <button
@@ -217,12 +219,15 @@ export function Navbar() {
 
                 {/* Action buttons */}
                 <div className="flex flex-col gap-2">
-                  <Link
-                    href="/login"
-                    className="bg-primary h-8 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-primary-foreground w-full px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-primary/90 transition-all ease-out active:scale-95"
+                  <button
+                    onClick={() => {
+                      setIsDrawerOpen(false);
+                      openAuthDialog();
+                    }}
+                    className="bg-primary h-8 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-primary-foreground w-full px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-primary/90 transition-all ease-out active:scale-95 cursor-pointer"
                   >
                     Try for free
-                  </Link>
+                  </button>
                 </div>
               </div>
             </motion.div>
