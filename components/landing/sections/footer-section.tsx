@@ -14,8 +14,8 @@ export function FooterSection() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between p-10">
         <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
           <Link href="/" className="flex items-center gap-2">
-            <Icons.logo className="size-8" />
-            <p className="text-xl font-semibold text-primary">Code Horse</p>
+            <Icons.logo className="size-10" />
+            <p className="text-xl font-semibold text-primary">Code Fox</p>
           </Link>
           <p className="tracking-tight text-muted-foreground font-medium">
             {siteConfig.hero.description}
@@ -58,7 +58,7 @@ export function FooterSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-background z-10 from-40%" />
         <div className="absolute inset-0 mx-6">
           <FlickeringGrid
-            text={tablet ? "Code Horse" : "AI-Powered Code Reviews"}
+            text={tablet ? "Code Fox" : "AI-Powered Code Reviews"}
             fontSize={tablet ? 70 : 90}
             className="h-full w-full"
             squareSize={2}

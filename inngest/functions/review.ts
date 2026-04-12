@@ -1,5 +1,5 @@
 /**
- * Inngest background job functions for Code Horse
+ * Inngest background job functions for Code Fox
  * 
  * This module contains serverless functions that handle:
  * - AI code review generation

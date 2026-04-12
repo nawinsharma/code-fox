@@ -1,5 +1,8 @@
 "use client";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 interface MessageBubbleProps {
 	message: {
 		role: "user" | "assistant";
@@ -19,7 +22,15 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 						: "bg-muted"
 				}`}
 			>
-				<p className="whitespace-pre-wrap">{message.content}</p>
+				{message.role === "assistant" ? (
+					<div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+						<ReactMarkdown remarkPlugins={[remarkGfm]}>
+							{message.content}
+						</ReactMarkdown>
+					</div>
+				) : (
+					<p className="whitespace-pre-wrap">{message.content}</p>
+				)}
 			</div>
 		</div>
 	);

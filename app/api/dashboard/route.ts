@@ -6,9 +6,19 @@ import { PLAN_LIMITS } from "@/lib/plan-limits";
 
 export async function GET() {
 	try {
-		const session = await auth.api.getSession({
-			headers: await headers(),
-		});
+		const reqHeaders = await headers();
+
+		// Retry session fetch to handle Neon cold start timeouts
+		let session = null;
+		for (let attempt = 0; attempt < 3; attempt++) {
+			try {
+				session = await auth.api.getSession({ headers: reqHeaders });
+				break;
+			} catch (err) {
+				if (attempt === 2) throw err;
+				await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+			}
+		}
 
 		if (!session) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -80,9 +90,9 @@ export async function GET() {
 				email: user.email,
 				name: user.name,
 				plan: user.subscriptionTier as "FREE" | "PRO",
-				prsUsed: user.prsUsed,
+				prsUsed: totalPRs,
 				prsCreated: user.prsCreated,
-				issuesUsed: user.issuesUsed,
+				issuesUsed: totalIssues,
 				chatMessagesUsed: user.chatMessagesUsed,
 				billingCycleStart: user.billingCycleStart,
 			},

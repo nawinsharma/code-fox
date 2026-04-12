@@ -3,6 +3,7 @@
 import { ActivityCalendar } from "react-activity-calendar";
 import { useTheme } from "next-themes";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { getContributionStats } from "@/modules/dashboard/actions";
 
@@ -16,45 +17,58 @@ const ContributionGraph = () => {
 
 	if (isLoading) {
 		return (
-			<div className="w-full flex flex-col items-center justify-center p-8">
-				<div className="animate-pulse text-muted-foreground">
-					Loading contribution data...
-				</div>
+			<div className="w-full space-y-3 py-4">
+				<Skeleton className="h-4 w-48 mx-auto" />
+				<Skeleton className="h-32 w-full rounded-lg" />
 			</div>
 		);
 	}
 
 	if (!data || !data.contributions.length) {
 		return (
-			<div className="w-full flex flex-col items-center justify-center p-8">
-				<div className="text-muted-foreground">
+			<div className="w-full flex flex-col items-center justify-center py-8">
+				<p className="text-sm text-muted-foreground">
 					No contribution data available
-				</div>
+				</p>
 			</div>
 		);
 	}
 
 	return (
-		<div className="w-full flex flex-col items-center gap-4">
-			<div className="text-sm text-muted-foreground">
-				<span className="font-semibold text-foreground">
+		<div className="w-full flex flex-col items-center gap-4 py-2">
+			<div className="flex items-center gap-2 text-sm">
+				<span className="text-2xl font-bold text-foreground tabular-nums">
 					{data.totalContributions}
-				</span>{" "}
-				contributions in last year
+				</span>
+				<span className="text-muted-foreground">
+					contributions in the last year
+				</span>
 			</div>
 
 			<div className="w-full overflow-x-auto flex justify-center">
 				<ActivityCalendar
 					data={data.contributions}
 					colorScheme={theme === "dark" ? "dark" : "light"}
-					blockSize={18}
-					blockMargin={6}
-					fontSize={16}
+					blockSize={14}
+					blockMargin={4}
+					fontSize={14}
 					showWeekdayLabels
 					showMonthLabels
 					theme={{
-						light: ["hsl(0, 0%, 92%)", "hsl(142, 71%, 45%)"],
-						dark: ["#161b22", "hsl(142, 71%, 45%)"],
+						light: [
+							"hsl(0, 0%, 93%)",
+							"hsl(142, 50%, 80%)",
+							"hsl(142, 55%, 65%)",
+							"hsl(142, 60%, 48%)",
+							"hsl(142, 70%, 35%)",
+						],
+						dark: [
+							"hsl(0, 0%, 14%)",
+							"hsl(142, 40%, 22%)",
+							"hsl(142, 50%, 32%)",
+							"hsl(142, 60%, 42%)",
+							"hsl(142, 71%, 45%)",
+						],
 					}}
 				/>
 			</div>

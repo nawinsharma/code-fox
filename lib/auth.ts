@@ -1,7 +1,7 @@
 /**
  * Authentication configuration using Better Auth.
  *
- * This file sets up the authentication system for Code Horse, including:
+ * This file sets up the authentication system for Code Fox, including:
  * - PostgreSQL adapter (via Prisma) for storing user data.
  * - GitHub OAuth provider for user login.
  * - Integration with Polar.sh for subscription management.
@@ -45,8 +45,7 @@ export const auth = betterAuth({
 	},
 	trustedOrigins: [
 		"http://localhost:3000",
-		"https://codeNawin.vercel.app",
-		"https://kamden-epeiric-caiden.ngrok-free.dev",
+		"https://codefox.nawin.xyz",
 	],
 	plugins: [
 		polar({
@@ -68,7 +67,7 @@ export const auth = betterAuth({
 				portal({
 					returnUrl:
 						process.env.NEXT_PUBLIC_APP_URL ||
-						"http://localhost:3000/dashboard",
+						"https://codefox.nawin.xyz/dashboard",
 				}),
 				usage(),
 				webhooks({

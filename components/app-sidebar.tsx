@@ -11,7 +11,9 @@ import {
 	MessageSquare,
 	ScrollText,
 	FileText,
+	Check,
 } from "lucide-react";
+import { Icons } from "@/components/landing/icons";
 import { Github } from "@/components/icons/github";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
@@ -115,48 +117,43 @@ export const AppSidebar = () => {
 	return (
 		<Sidebar>
 			<SidebarHeader className="border-b">
-				<div className="flex flex-col gap-4 px-2 py-6">
-					<div className="flex items-center gap-4 px-3 py-4 rounded-lg bg-sidebar-accent/50 hover:bg-sidebar-accent/70 transition-colors">
-						<div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary text-primary-foreground shrink-0">
-							<Github className="w-6 h-6" />
-						</div>
-						<div className="flex-1 min-w-0">
-							<p className="text-xs font-semibold text-sidebar-foreground tracking-wide">
-								Connected Account
-							</p>
-							<p className="text-sm font-medium text-sidebar-foreground/90 truncate">
-								@{userName}
-							</p>
-						</div>
+				<div className="flex flex-col gap-3 px-2 py-4">
+					<Link href="/dashboard" className="flex items-center gap-2.5 px-2">
+						<Icons.logo className="size-16" />
+						<span className="text-lg font-semibold text-foreground tracking-tight">
+							Code Fox
+						</span>
+					</Link>
+
+					<div className="flex items-center gap-2.5 px-2 py-1.5 rounded-md bg-sidebar-accent/40">
+						<Github className="w-4 h-4 text-sidebar-foreground/70 shrink-0" />
+						<span className="text-xs text-sidebar-foreground/70 truncate">
+							@{userName}
+						</span>
+						<Check className="w-3 h-3 text-emerald-500 shrink-0 ml-auto" />
 					</div>
 				</div>
 			</SidebarHeader>
 
-			<SidebarContent className="px-3 py-6 flex-col gap-1">
-				<div className="mb-2">
-					<p className="text-xs font-semibold text-sidebar-foreground/60 px-3 mb-3 uppercase tracking-widest">
-						Menu
-					</p>
-				</div>
-
-				<SidebarMenu className="gap-2">
+			<SidebarContent className="px-3 py-4 flex-col gap-1">
+				<SidebarMenu className="gap-1">
 					{navigationItems.map((item) => (
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton
 								asChild
 								tooltip={item.title}
-								className={`h-11 px-4 rounded-lg transition-all duration-200 ${
+								className={`h-9 px-3 rounded-md transition-all duration-150 ${
 									isActive(item.url)
-										? "bg-primary/90 text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold"
-										: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-accent-foreground"
+										? "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground font-medium"
+										: "hover:bg-sidebar-accent text-sidebar-foreground/80 hover:text-sidebar-foreground"
 								}`}
 							>
 								<Link
 									href={item.url}
-									className="flex items-center gap-3"
+									className="flex items-center gap-2.5"
 								>
-									<item.icon className="w-5 h-5 flex shrink-0" />
-									<span className="text-sm font-medium">
+									<item.icon className="w-4 h-4 shrink-0" />
+									<span className="text-sm">
 										{item.title}
 									</span>
 								</Link>

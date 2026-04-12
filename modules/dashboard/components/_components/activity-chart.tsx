@@ -38,7 +38,7 @@ export function ActivityChart({
 	const totalIssues = chartData.reduce((sum, d) => sum + d.issues, 0);
 
 	return (
-		<div className="rounded-xl border bg-card">
+		<div className="rounded-2xl border bg-card overflow-hidden">
 			<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 pb-2">
 				<div className="flex items-center gap-3">
 					<div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 text-primary">
@@ -52,23 +52,24 @@ export function ActivityChart({
 					</div>
 				</div>
 				<div className="flex items-center gap-4">
-					<div className="hidden sm:flex items-center gap-4 text-xs text-muted-foreground">
-						<span>
+					<div className="hidden sm:flex items-center gap-3 text-xs">
+						<div className="flex items-center gap-1.5 bg-muted/50 px-2.5 py-1.5 rounded-full">
+							<span className="w-2 h-2 rounded-full bg-[var(--chart-1)]" />
 							<span className="font-semibold text-foreground tabular-nums">
 								{totalPRs}
-							</span>{" "}
-							PRs
-						</span>
-						<span className="w-px h-3 bg-border" />
-						<span>
+							</span>
+							<span className="text-muted-foreground">PRs</span>
+						</div>
+						<div className="flex items-center gap-1.5 bg-muted/50 px-2.5 py-1.5 rounded-full">
+							<span className="w-2 h-2 rounded-full bg-[var(--chart-2)]" />
 							<span className="font-semibold text-foreground tabular-nums">
 								{totalIssues}
-							</span>{" "}
-							Issues
-						</span>
+							</span>
+							<span className="text-muted-foreground">Issues</span>
+						</div>
 					</div>
 					<Select value={timeRange} onValueChange={onTimeRangeChange}>
-						<SelectTrigger className="w-36 h-8 text-xs">
+						<SelectTrigger className="w-36 h-8 text-xs rounded-lg">
 							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
@@ -79,8 +80,8 @@ export function ActivityChart({
 					</Select>
 				</div>
 			</div>
-			<div className="px-6 pb-4 pt-2">
-				<ChartContainer config={chartConfig} className="h-72 w-full">
+			<div className="px-6 pb-6 pt-2">
+				<ChartContainer config={chartConfig} className="h-72 w-full aspect-auto min-w-0">
 					<AreaChart
 						data={chartData}
 						margin={{ top: 8, right: 8, left: -12, bottom: 0 }}
@@ -96,12 +97,12 @@ export function ActivityChart({
 								<stop
 									offset="0%"
 									stopColor="var(--chart-1)"
-									stopOpacity={0.3}
+									stopOpacity={0.25}
 								/>
 								<stop
 									offset="100%"
 									stopColor="var(--chart-1)"
-									stopOpacity={0.02}
+									stopOpacity={0.01}
 								/>
 							</linearGradient>
 							<linearGradient
@@ -114,12 +115,12 @@ export function ActivityChart({
 								<stop
 									offset="0%"
 									stopColor="var(--chart-2)"
-									stopOpacity={0.3}
+									stopOpacity={0.25}
 								/>
 								<stop
 									offset="100%"
 									stopColor="var(--chart-2)"
-									stopOpacity={0.02}
+									stopOpacity={0.01}
 								/>
 							</linearGradient>
 						</defs>
@@ -127,7 +128,7 @@ export function ActivityChart({
 							vertical={false}
 							strokeDasharray="3 3"
 							stroke="var(--border)"
-							strokeOpacity={0.5}
+							strokeOpacity={0.4}
 						/>
 						<XAxis
 							dataKey="date"
@@ -135,7 +136,10 @@ export function ActivityChart({
 							axisLine={false}
 							tickMargin={12}
 							minTickGap={48}
-							tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+							tick={{
+								fontSize: 11,
+								fill: "var(--muted-foreground)",
+							}}
 							tickFormatter={(value) => {
 								const date = new Date(value + "T00:00:00");
 								return date.toLocaleDateString("en-US", {
@@ -147,7 +151,10 @@ export function ActivityChart({
 						<YAxis
 							tickLine={false}
 							axisLine={false}
-							tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+							tick={{
+								fontSize: 11,
+								fill: "var(--muted-foreground)",
+							}}
 							allowDecimals={false}
 							width={32}
 						/>
@@ -156,12 +163,17 @@ export function ActivityChart({
 								<ChartTooltipContent
 									indicator="dot"
 									labelFormatter={(value) => {
-										const date = new Date(value + "T00:00:00");
-										return date.toLocaleDateString("en-US", {
-											weekday: "short",
-											month: "short",
-											day: "numeric",
-										});
+										const date = new Date(
+											value + "T00:00:00",
+										);
+										return date.toLocaleDateString(
+											"en-US",
+											{
+												weekday: "short",
+												month: "short",
+												day: "numeric",
+											},
+										);
 									}}
 								/>
 							}
@@ -171,7 +183,7 @@ export function ActivityChart({
 							type="monotone"
 							fill="url(#fillIssues)"
 							stroke="var(--chart-2)"
-							strokeWidth={1.5}
+							strokeWidth={2}
 							stackId="a"
 						/>
 						<Area
@@ -179,7 +191,7 @@ export function ActivityChart({
 							type="monotone"
 							fill="url(#fillPRs)"
 							stroke="var(--chart-1)"
-							strokeWidth={1.5}
+							strokeWidth={2}
 							stackId="a"
 						/>
 						<ChartLegend content={<ChartLegendContent />} />
