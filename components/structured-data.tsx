@@ -90,6 +90,7 @@ export default function StructuredData({ type, data }: StructuredDataProps) {
   return (
     <script
       type="application/ld+json"
+      suppressHydrationWarning
       dangerouslySetInnerHTML={{
         __html: JSON.stringify(structuredData)
       }}

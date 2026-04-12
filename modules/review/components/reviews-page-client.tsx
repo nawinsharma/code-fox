@@ -134,18 +134,17 @@ export default function ReviewsPageClient() {
 										<Button
 											variant="ghost"
 											size="icon"
-											asChild
-											onClick={(e) =>
-												e.stopPropagation()
-											}
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+												window.open(
+													review.prUrl,
+													"_blank",
+													"noopener,noreferrer"
+												);
+											}}
 										>
-											<a
-												href={review.prUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												<ExternalLink className="h-4 w-4" />
-											</a>
+											<ExternalLink className="h-4 w-4" />
 										</Button>
 									</div>
 								</CardHeader>
