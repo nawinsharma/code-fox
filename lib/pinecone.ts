@@ -19,7 +19,7 @@ export const pinecone = new Pinecone({
 
 // Index name: set PINECONE_INDEX_NAME in .env. Dimension 3072 = gemini-embedding-001.
 const indexName =
-	process.env.PINECONE_INDEX_NAME ?? "codenawin-vector-embeddings";
+	process.env.PINECONE_INDEX_NAME || "codenawin-vector-embeddings";
 const embeddingDimension = 3072;
 const cloud = (process.env.PINECONE_CLOUD ?? "aws") as "aws" | "gcp" | "azure";
 const region = process.env.PINECONE_REGION ?? "us-east-1";

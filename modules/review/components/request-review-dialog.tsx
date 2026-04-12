@@ -175,13 +175,32 @@ export function RequestReviewDialog() {
 												</Badge>
 											) : pr.reviewStatus ===
 											  "failed" ? (
-												<Badge
-													variant="destructive"
-													className="gap-1"
+												<Button
+													size="sm"
+													variant="outline"
+													className="gap-1 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+													disabled={
+														reviewMutation.isPending
+													}
+													onClick={() =>
+														reviewMutation.mutate(
+															{
+																repoId: selectedRepoId,
+																prNumber:
+																	pr.number,
+															}
+														)
+													}
 												>
-													<XCircle className="h-3 w-3" />
-													Failed
-												</Badge>
+													{reviewMutation.isPending ? (
+														<Loader2 className="h-3 w-3 animate-spin" />
+													) : (
+														<>
+															<XCircle className="h-3 w-3" />
+															Retry
+														</>
+													)}
+												</Button>
 											) : (
 												<Button
 													size="sm"

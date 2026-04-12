@@ -113,6 +113,35 @@ export async function getOpenPullRequests(repositoryId: string) {
 	}));
 }
 
+export async function deleteReview(id: string) {
+	const session = await auth.api.getSession({
+		headers: await headers(),
+	});
+
+	if (!session) {
+		throw new Error("Unauthorized");
+	}
+
+	const review = await prisma.review.findFirst({
+		where: {
+			id,
+			repository: {
+				userId: session.user.id,
+			},
+		},
+	});
+
+	if (!review) {
+		throw new Error("Review not found");
+	}
+
+	await prisma.review.delete({
+		where: { id },
+	});
+
+	return { success: true };
+}
+
 export async function requestManualReview(
 	repositoryId: string,
 	prNumber: number
