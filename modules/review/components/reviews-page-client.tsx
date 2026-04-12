@@ -19,20 +19,47 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Clock, CheckCircle2, XCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { ExternalLink, Clock, CheckCircle2, XCircle, Trash2 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
-import { getReviews } from "@/modules/review/actions";
+import { getReviews, deleteReview } from "@/modules/review/actions";
 import { RequestReviewDialog } from "@/modules/review/components/request-review-dialog";
 
 export default function ReviewsPageClient() {
+	const queryClient = useQueryClient();
+	const [deleteTarget, setDeleteTarget] = useState<{ id: string; prNumber: number } | null>(null);
+
 	const { data: reviews, isLoading } = useQuery({
 		queryKey: ["reviews"],
 		queryFn: getReviews,
+	});
+
+	const deleteMutation = useMutation({
+		mutationFn: (id: string) => deleteReview(id),
+		onSuccess: () => {
+			toast.success("Review deleted");
+			setDeleteTarget(null);
+			queryClient.invalidateQueries({ queryKey: ["reviews"] });
+		},
+		onError: (error: Error) => {
+			toast.error(error.message || "Failed to delete review");
+		},
 	});
 
 	if (isLoading) {
@@ -131,22 +158,35 @@ export default function ReviewsPageClient() {
 											</CardDescription>
 										</div>
 
-										<Button
-											variant="ghost"
-											size="icon"
-											asChild
-											onClick={(e) =>
-												e.stopPropagation()
-											}
-										>
-											<a
-												href={review.prUrl}
-												target="_blank"
-												rel="noopener noreferrer"
+										<div className="flex items-center gap-1">
+											<Button
+												variant="ghost"
+												size="icon"
+												onClick={(e) => {
+													e.preventDefault();
+													e.stopPropagation();
+													window.open(
+														review.prUrl,
+														"_blank",
+														"noopener,noreferrer"
+													);
+												}}
 											>
 												<ExternalLink className="h-4 w-4" />
-											</a>
-										</Button>
+											</Button>
+											<Button
+												variant="ghost"
+												size="icon"
+												className="text-muted-foreground hover:text-destructive"
+												onClick={(e) => {
+													e.preventDefault();
+													e.stopPropagation();
+													setDeleteTarget({ id: review.id, prNumber: review.prNumber });
+												}}
+											>
+												<Trash2 className="h-4 w-4" />
+											</Button>
+										</div>
 									</div>
 								</CardHeader>
 								<CardContent>
@@ -167,6 +207,26 @@ export default function ReviewsPageClient() {
 					))}
 				</div>
 			)}
+
+			<AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete review?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This will permanently delete the review for PR #{deleteTarget?.prNumber}. This action cannot be undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+							onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }
