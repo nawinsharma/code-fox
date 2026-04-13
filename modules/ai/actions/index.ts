@@ -13,13 +13,17 @@ import { PLAN_LIMITS, type PlanType } from "@/lib/plan-limits";
  * @param owner - Repository owner username
  * @param repo - Repository name
  * @param prNumber - Pull request number
+ * @param prTitle - Optional PR title for the pending review record
  * @returns Promise with success status and message
  */
 export async function reviewPullRequest(
 	owner: string,
 	repo: string,
-	prNumber: number
+	prNumber: number,
+	prTitle?: string
 ) {
+	let pendingReviewId: string | null = null;
+
 	try {
 		const respository = await prisma.repository.findFirst({
 			where: {
@@ -64,7 +68,18 @@ export async function reviewPullRequest(
 			);
 		}
 
-		const token = githubAccount.accessToken;
+		// Create pending review record immediately so it appears in the UI
+		const pendingReview = await prisma.review.create({
+			data: {
+				repositoryId: respository.id,
+				prNumber,
+				prTitle: prTitle || `PR #${prNumber}`,
+				prUrl: `https://github.com/${owner}/${repo}/pull/${prNumber}`,
+				review: "",
+				status: "pending",
+			},
+		});
+		pendingReviewId = pendingReview.id;
 
 		await inngest.send({
 			name: "pr.review.requested",
@@ -73,6 +88,7 @@ export async function reviewPullRequest(
 				repo,
 				prNumber,
 				userId: respository.user.id,
+				reviewId: pendingReview.id,
 			},
 		});
 
@@ -81,20 +97,11 @@ export async function reviewPullRequest(
 		return { success: true, message: "Review Queued" };
 	} catch (error) {
 		try {
-			const repository = await prisma.repository.findFirst({
-				where: {
-					owner,
-					name: repo,
-				},
-			});
-
-			if (repository) {
-				await prisma.review.create({
+			if (pendingReviewId) {
+				// Update the pending review to failed
+				await prisma.review.update({
+					where: { id: pendingReviewId },
 					data: {
-						repositoryId: repository.id,
-						prNumber,
-						prTitle: "Failed to fetch PR",
-						prUrl: `https://github.com/${owner}/${repo}/pull/${prNumber}`,
 						review: `Error: ${
 							error instanceof Error
 								? error.message
@@ -103,6 +110,31 @@ export async function reviewPullRequest(
 						status: "failed",
 					},
 				});
+			} else {
+				// Pending review wasn't created yet, create a failed record
+				const repository = await prisma.repository.findFirst({
+					where: {
+						owner,
+						name: repo,
+					},
+				});
+
+				if (repository) {
+					await prisma.review.create({
+						data: {
+							repositoryId: repository.id,
+							prNumber,
+							prTitle: prTitle || `PR #${prNumber}`,
+							prUrl: `https://github.com/${owner}/${repo}/pull/${prNumber}`,
+							review: `Error: ${
+								error instanceof Error
+									? error.message
+									: "Unknown Error"
+							}`,
+							status: "failed",
+						},
+					});
+				}
 			}
 		} catch (dbError) {
 			console.error("Failed to save error to database:", dbError);

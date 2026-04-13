@@ -144,7 +144,8 @@ export async function deleteReview(id: string) {
 
 export async function requestManualReview(
 	repositoryId: string,
-	prNumber: number
+	prNumber: number,
+	prTitle?: string
 ) {
 	const session = await auth.api.getSession({
 		headers: await headers(),
@@ -168,6 +169,7 @@ export async function requestManualReview(
 	return await reviewPullRequest(
 		repository.owner,
 		repository.name,
-		prNumber
+		prNumber,
+		prTitle
 	);
 }
