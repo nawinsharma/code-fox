@@ -16,10 +16,11 @@ export async function POST(request: NextRequest) {
 			const action = body.action;
 			const repo = body.repository.full_name;
 			const prNumber = body.number;
+			const prTitle = body.pull_request?.title;
 			const [owner, repoName] = repo.split("/");
 
 			if (action === "opened" || action === "synchronize") {
-				reviewPullRequest(owner, repoName, prNumber)
+				reviewPullRequest(owner, repoName, prNumber, prTitle)
 					.then(() =>
 						console.log(
 							`Successfully processed PR ${prNumber} for ${repo}`,

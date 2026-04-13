@@ -48,6 +48,10 @@ export default function ReviewsPageClient() {
 	const { data: reviews, isLoading } = useQuery({
 		queryKey: ["reviews"],
 		queryFn: getReviews,
+		refetchInterval: (query) => {
+			const data = query.state.data as any[] | undefined;
+			return data?.some((r) => r.status === "pending") ? 5000 : false;
+		},
 	});
 
 	const deleteMutation = useMutation({

@@ -35,9 +35,25 @@ import { anthropic } from "@ai-sdk/anthropic";
  * 5. **save-review**: Saves the review details to the database.
  */
 export const generateReview = inngest.createFunction(
-	{ id: "generate-review", concurrency: 5, triggers: [{ event: "pr.review.requested" }] },
+	{
+		id: "generate-review",
+		concurrency: 5,
+		triggers: [{ event: "pr.review.requested" }],
+		onFailure: async ({ event }) => {
+			const reviewId = event.data.event.data.reviewId;
+			if (reviewId) {
+				await prisma.review.update({
+					where: { id: reviewId },
+					data: {
+						status: "failed",
+						review: "Review generation failed. Please retry.",
+					},
+				});
+			}
+		},
+	},
 	async ({ event, step }) => {
-		const { owner, repo, prNumber, userId } = event.data;
+		const { owner, repo, prNumber, userId, reviewId } = event.data;
 
 		const { diff, title, description, token } = await step.run(
 			"fetch-pr-data",
@@ -119,25 +135,14 @@ Format your response in markdown.`;
 		});
 
 		await step.run("save-review", async () => {
-			const repository = await prisma.repository.findFirst({
-				where: {
-					owner,
-					name: repo,
+			await prisma.review.update({
+				where: { id: reviewId },
+				data: {
+					prTitle: title,
+					review: review as string,
+					status: "completed",
 				},
 			});
-
-			if (repository) {
-				await prisma.review.create({
-					data: {
-						repositoryId: repository.id,
-						prNumber,
-						prTitle: title,
-						prUrl: `https://github.com/${owner}/${repo}/pull/${prNumber}`,
-						review: review as string,
-						status: "completed",
-					},
-				});
-			}
 
 			await prisma.user.update({
 				where: { id: userId },

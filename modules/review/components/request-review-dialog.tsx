@@ -54,8 +54,8 @@ export function RequestReviewDialog() {
 	});
 
 	const reviewMutation = useMutation({
-		mutationFn: ({ repoId, prNumber }: { repoId: string; prNumber: number }) =>
-			requestManualReview(repoId, prNumber),
+		mutationFn: ({ repoId, prNumber, prTitle }: { repoId: string; prNumber: number; prTitle?: string }) =>
+			requestManualReview(repoId, prNumber, prTitle),
 		onSuccess: () => {
 			toast.success("Review requested! It will appear shortly.");
 			queryClient.invalidateQueries({ queryKey: ["reviews"] });
@@ -188,6 +188,8 @@ export function RequestReviewDialog() {
 																repoId: selectedRepoId,
 																prNumber:
 																	pr.number,
+																prTitle:
+																	pr.title,
 															}
 														)
 													}
@@ -214,6 +216,8 @@ export function RequestReviewDialog() {
 																repoId: selectedRepoId,
 																prNumber:
 																	pr.number,
+																prTitle:
+																	pr.title,
 															}
 														)
 													}
