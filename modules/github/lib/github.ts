@@ -403,9 +403,9 @@ export async function postReviewComment(
 		body: [
 			`<div align="center">`,
 			`<a href="${appUrl}">`,
-			`<img src="${logoUrl}" alt="Code Fox" width="40" height="40" />`,
+			`<img src="${logoUrl}" alt="Code Fox" width="200" height="200" />`,
 			`</a>`,
-			`<h3>Code Fox — AI Code Review</h3>`,
+			`<h1>Code Fox — AI Code Review</h1>`,
 			`</div>`,
 			``,
 			`${review}`,
