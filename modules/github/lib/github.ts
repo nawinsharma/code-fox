@@ -393,11 +393,29 @@ export async function postReviewComment(
 ) {
 	const octokit = new Octokit({ auth: token });
 
+	const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://codefox.nawin.xyz";
+	const logoUrl = `${appUrl}/logo.png`;
+
 	await octokit.rest.issues.createComment({
 		owner,
 		repo,
 		issue_number: prNumber,
-		body: `## 🤖 AI Code Review\n\n${review}\n\n---\n*Powered By codeNawin*`,
+		body: [
+			`<div align="center">`,
+			`<a href="${appUrl}">`,
+			`<img src="${logoUrl}" alt="Code Fox" width="40" height="40" />`,
+			`</a>`,
+			`<h3>Code Fox — AI Code Review</h3>`,
+			`</div>`,
+			``,
+			`${review}`,
+			``,
+			`---`,
+			``,
+			`<div align="center">`,
+			`<sub>🦊 Automated review by <a href="${appUrl}"><b>Code Fox</b></a> — AI-powered code reviews for GitHub</sub>`,
+			`</div>`,
+		].join("\n"),
 	});
 }
 
@@ -410,11 +428,29 @@ export async function postIssueComment(
 ) {
 	const octokit = new Octokit({ auth: token });
 
+	const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://codefox.nawin.xyz";
+	const logoUrl = `${appUrl}/logo.png`;
+
 	await octokit.rest.issues.createComment({
 		owner,
 		repo,
 		issue_number: issueNumber,
-		body: `## 🤖 AI Issue Analysis\n\n${comment}\n\n---\n*Powered By codeNawin*`,
+		body: [
+			`<div align="center">`,
+			`<a href="${appUrl}">`,
+			`<img src="${logoUrl}" alt="Code Fox" width="40" height="40" />`,
+			`</a>`,
+			`<h3>Code Fox — AI Issue Analysis</h3>`,
+			`</div>`,
+			``,
+			`${comment}`,
+			``,
+			`---`,
+			``,
+			`<div align="center">`,
+			`<sub>🦊 Automated analysis by <a href="${appUrl}"><b>Code Fox</b></a> — AI-powered code reviews for GitHub</sub>`,
+			`</div>`,
+		].join("\n"),
 	});
 }
 
