@@ -102,7 +102,7 @@ const DashboardPageClient = () => {
 	const { getUsagePercentage } = useUsage();
 	const [timeRange, setTimeRange] = useState("90d");
 
-	const { data, isLoading } = useQuery<DashboardData>({
+	const { data, isLoading, isPending } = useQuery<DashboardData>({
 		queryKey: DASHBOARD_QUERY_KEY,
 		queryFn: async () => {
 			const res = await fetch("/api/dashboard");
@@ -112,7 +112,7 @@ const DashboardPageClient = () => {
 		enabled: !!session,
 	});
 
-	if (isLoading) {
+	if (isLoading || isPending) {
 		return <DashboardSkeleton />;
 	}
 
