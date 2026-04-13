@@ -4,7 +4,7 @@ import { retrieveContext } from "@/modules/ai/lib/rag";
 import prisma from "@/lib/db";
 
 import { generateText } from "ai";
-import { google } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
 
 export const analyzeIssueJob = inngest.createFunction(
 	{ id: "analyze-issue", concurrency: 5, triggers: [{ event: "issue.analysis.requested" }] },
@@ -65,7 +65,7 @@ Please provide:
 Format your response in markdown.`;
 
 			const { text } = await generateText({
-				model: google("gemini-2.5-flash"),
+				model: anthropic("claude-sonnet-4-6-20250514"),
 				prompt,
 			});
 
