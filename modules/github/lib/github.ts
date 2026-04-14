@@ -5,10 +5,25 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 
 /**
+ * Retrieves the GitHub access token for a given user ID.
+ */
+export async function getAccessTokenByUserId(userId: string): Promise<string> {
+	const account = await prisma.account.findFirst({
+		where: {
+			userId,
+			providerId: "github",
+		},
+	});
+
+	if (!account?.accessToken) {
+		throw new Error("No GitHub access token found");
+	}
+
+	return account.accessToken;
+}
+
+/**
  * Retrieves the GitHub access token for the currently authenticated user.
- *
- * @throws Error if the user is not authenticated or hasn't connected GitHub.
- * @returns The GitHub access token string.
  */
 export const getGithubAccessToken = async () => {
 	const session = await auth.api.getSession({
@@ -19,18 +34,7 @@ export const getGithubAccessToken = async () => {
 		throw new Error("Unauthorized");
 	}
 
-	const account = await prisma.account.findFirst({
-		where: {
-			userId: session.user.id,
-			providerId: "github",
-		},
-	});
-
-	if (!account?.accessToken) {
-		throw new Error("No GitHub access token found");
-	}
-
-	return account.accessToken;
+	return getAccessTokenByUserId(session.user.id);
 };
 
 /**

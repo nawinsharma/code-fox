@@ -5,15 +5,14 @@ import {
 	fetchUserContribution,
 	getGithubAccessToken,
 } from "@/modules/github/lib/github";
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import {
 	canConnectRepository,
 	incrementRepositoryCount,
 } from "@/modules/payment/lib/subscription";
+import { requireSession } from "@/modules/auth/utils/auth-utils";
 
 import { Octokit } from "octokit";
-import { headers } from "next/headers";
 import { inngest } from "@/inngest/client";
 
 /**
@@ -22,13 +21,7 @@ import { inngest } from "@/inngest/client";
  */
 export async function getDashboardStats() {
 	try {
-		const session = await auth.api.getSession({
-			headers: await headers(),
-		});
-
-		if (!session) {
-			throw new Error("Unauthorized");
-		}
+		const session = await requireSession();
 
 		const token = await getGithubAccessToken();
 		const octokit = new Octokit({ auth: token });
@@ -78,13 +71,7 @@ export async function getDashboardStats() {
 
 export async function getMonthlyActivity() {
 	try {
-		const session = await auth.api.getSession({
-			headers: await headers(),
-		});
-
-		if (!session) {
-			throw new Error("Unauthorized");
-		}
+		const session = await requireSession();
 
 		const token = await getGithubAccessToken();
 		const octokit = new Octokit({ auth: token });
@@ -196,13 +183,7 @@ export async function getMonthlyActivity() {
 
 export async function getContributionStats() {
 	try {
-		const session = await auth.api.getSession({
-			headers: await headers(),
-		});
-
-		if (!session) {
-			throw new Error("Unauthorized");
-		}
+		await requireSession();
 
 		const token = await getGithubAccessToken();
 		const octokit = new Octokit({ auth: token });
@@ -247,13 +228,7 @@ export async function connectRepository(
 	repo: string,
 	githubId: number
 ) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		throw new Error("Unauthorized");
-	}
+	const session = await requireSession();
 
 	const canConnect = await canConnectRepository(session.user.id);
 

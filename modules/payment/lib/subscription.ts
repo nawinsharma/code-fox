@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { PLAN_LIMITS } from "@/lib/plan-limits";
 
 export type SubscriptionTier = "FREE" | "PRO";
 export type SubscriptionStatus = "ACTIVE" | "CANCELLED" | "EXPIRED";
@@ -9,7 +10,7 @@ export interface UserLimits {
 	tier: SubscriptionTier;
 	repositories: {
 		current: number;
-		limit: number | null; // null means unlimited
+		limit: number | null;
 		canAdd: boolean;
 	};
 	reviews: {
@@ -21,26 +22,8 @@ export interface UserLimits {
 	};
 }
 
-const TIER_LIMITS = {
-	FREE: {
-		repositories: 5,
-		reviewsPerRepo: 5,
-	},
-	PRO: {
-		repositories: null, // unlimited
-		reviewsPerRepo: null, // unlimited
-	},
-} as const;
-
 /**
- * Gets the user's current subscription tier.
- * @param userId - User ID.
- * @returns 'FREE' or 'PRO'.
- */
-/**
- * Retrieves user's current subscription tier
- * @param userId - User identifier
- * @returns Promise resolving to subscription tier (FREE or PRO)
+ * Retrieves user's current subscription tier.
  */
 export async function getUserTier(userId: string): Promise<SubscriptionTier> {
 	const user = await prisma.user.findUnique({
@@ -82,53 +65,32 @@ async function getUserUsage(userId: string) {
 
 /**
  * Checks if the user can connect a new repository based on their tier limits.
- * @param userId - User ID.
- * @returns True if allowed, false otherwise.
- */
-/**
- * Checks if user can connect a new repository based on subscription limits
- * @param userId - User identifier
- * @returns Promise resolving to boolean indicating if repository can be connected
  */
 export async function canConnectRepository(userId: string) {
 	const tier = await getUserTier(userId);
+	const limit = PLAN_LIMITS[tier].repositories;
 
-	if (tier === "PRO") {
-		return true; // Unlimited for pro users
-	}
+	if (limit === null) return true;
 
 	const usage = await getUserUsage(userId);
-	const limit = TIER_LIMITS.FREE.repositories;
-
 	return usage.repositoryCount < limit;
 }
 
 /**
  * Checks if the user can request a review for a specific repository.
- * @param userId - User ID.
- * @param repositoryId - Repository ID.
- * @returns True if allowed, false otherwise.
- */
-/**
- * Checks if user can create a review based on subscription tier and usage limits
- * @param userId - User identifier
- * @param repositoryId - Repository identifier
- * @returns Promise resolving to boolean indicating if review can be created
  */
 export async function canCreateReview(
 	userId: string,
 	repositoryId: string
 ): Promise<boolean> {
 	const tier = await getUserTier(userId);
+	const limit = PLAN_LIMITS[tier].reviewsPerRepo;
 
-	if (tier === "PRO") {
-		return true; // Unlimited for pro users
-	}
+	if (limit === null) return true;
 
 	const usage = await getUserUsage(userId);
 	const reviewCounts = usage.reviewCounts as Record<string, number>;
 	const currentCount = reviewCounts[repositoryId] || 0;
-	const limit = TIER_LIMITS.FREE.reviewsPerRepo;
 
 	return currentCount < limit;
 }
@@ -200,33 +162,30 @@ export async function getRemainingLimits(userId: string): Promise<UserLimits> {
 	const usage = await getUserUsage(userId);
 	const reviewCounts = usage.reviewCounts as Record<string, number>;
 
+	const repoLimit = PLAN_LIMITS[tier].repositories;
+	const reviewLimit = PLAN_LIMITS[tier].reviewsPerRepo;
+
 	const limits: UserLimits = {
 		tier,
 		repositories: {
 			current: usage.repositoryCount,
-			limit: tier === "PRO" ? null : TIER_LIMITS.FREE.repositories,
-			canAdd:
-				tier === "PRO" ||
-				usage.repositoryCount < TIER_LIMITS.FREE.repositories,
+			limit: repoLimit,
+			canAdd: repoLimit === null || usage.repositoryCount < repoLimit,
 		},
 		reviews: {},
 	};
 
-	// Get all user's repositories
 	const repositories = await prisma.repository.findMany({
 		where: { userId },
 		select: { id: true },
 	});
 
-	// Calculate limits for each repository
 	for (const repo of repositories) {
 		const currentCount = reviewCounts[repo.id] || 0;
 		limits.reviews[repo.id] = {
 			current: currentCount,
-			limit: tier === "PRO" ? null : TIER_LIMITS.FREE.reviewsPerRepo,
-			canAdd:
-				tier === "PRO" ||
-				currentCount < TIER_LIMITS.FREE.reviewsPerRepo,
+			limit: reviewLimit,
+			canAdd: reviewLimit === null || currentCount < reviewLimit,
 		};
 	}
 
@@ -234,11 +193,7 @@ export async function getRemainingLimits(userId: string): Promise<UserLimits> {
 }
 
 /**
- * Updates the user's subscription tier and status.
- * @param userId - User ID.
- * @param tier - New tier.
- * @param status - New status.
- * @param polarSubscriptionId - Optional Polar subscription ID.
+ * Updates the user's subscription tier, status, and optionally the Polar subscription ID.
  */
 export async function updateUserTier(
 	userId: string,
@@ -251,6 +206,7 @@ export async function updateUserTier(
 		data: {
 			subscriptionTier: tier,
 			subscriptionStatus: status,
+			...(polarSubscriptionId !== undefined && { polarSubscriptionId }),
 		},
 	});
 }

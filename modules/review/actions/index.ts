@@ -1,21 +1,13 @@
 "use server";
 
 import prisma from "@/lib/db";
-import { auth } from "@/lib/auth";
 import { getGithubAccessToken } from "@/modules/github/lib/github";
 import { reviewPullRequest } from "@/modules/ai/actions";
+import { requireSession } from "@/modules/auth/utils/auth-utils";
 import { Octokit } from "octokit";
 
-import { headers } from "next/headers";
-
 export async function getReviews() {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		throw new Error("Unauthorized");
-	}
+	const session = await requireSession();
 
 	const reviews = await prisma.review.findMany({
 		where: {
@@ -36,13 +28,7 @@ export async function getReviews() {
 }
 
 export async function getReviewById(id: string) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		throw new Error("Unauthorized");
-	}
+	const session = await requireSession();
 
 	const review = await prisma.review.findFirst({
 		where: {
@@ -60,13 +46,7 @@ export async function getReviewById(id: string) {
 }
 
 export async function getOpenPullRequests(repositoryId: string) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		throw new Error("Unauthorized");
-	}
+	const session = await requireSession();
 
 	const repository = await prisma.repository.findFirst({
 		where: {
@@ -114,13 +94,7 @@ export async function getOpenPullRequests(repositoryId: string) {
 }
 
 export async function deleteReview(id: string) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		throw new Error("Unauthorized");
-	}
+	const session = await requireSession();
 
 	const review = await prisma.review.findFirst({
 		where: {
@@ -147,13 +121,7 @@ export async function requestManualReview(
 	prNumber: number,
 	prTitle?: string
 ) {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		throw new Error("Unauthorized");
-	}
+	const session = await requireSession();
 
 	const repository = await prisma.repository.findFirst({
 		where: {

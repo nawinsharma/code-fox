@@ -1,14 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import {
 	getRemainingLimits,
 	updateUserTier,
 } from "@/modules/payment/lib/subscription";
 import { polarClient } from "@/modules/payment/config/polar";
 import prisma from "@/lib/db";
-
-import { headers } from "next/headers";
+import { requireSession } from "@/modules/auth/utils/auth-utils";
 
 export interface SubscriptionData {
 	user: {
@@ -43,11 +41,10 @@ export interface SubscriptionData {
  * @returns An object containing user details and limit information.
  */
 export async function getSubscriptionData(): Promise<SubscriptionData> {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session?.user) {
+	let session;
+	try {
+		session = await requireSession();
+	} catch {
 		return { user: null, limits: null };
 	}
 
@@ -83,13 +80,7 @@ export async function getSubscriptionData(): Promise<SubscriptionData> {
  * @returns Object indicating success status and the new subscription status.
  */
 export async function syncSubscriptionStatus() {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session?.user) {
-		throw new Error("Not authenticated");
-	}
+	const session = await requireSession();
 
 	const user = await prisma.user.findUnique({
 		where: { id: session.user.id },

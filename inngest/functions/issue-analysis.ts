@@ -1,5 +1,5 @@
 import { inngest } from "../client";
-import { postIssueComment } from "@/modules/github/lib/github";
+import { getAccessTokenByUserId, postIssueComment } from "@/modules/github/lib/github";
 import { retrieveContext } from "@/modules/ai/lib/rag";
 import prisma from "@/lib/db";
 
@@ -20,13 +20,7 @@ export const analyzeIssueJob = inngest.createFunction(
 		} = event.data;
 
 		const token = await step.run("get-token", async () => {
-			const account = await prisma.account.findFirst({
-				where: { userId, providerId: "github" },
-			});
-			if (!account?.accessToken) {
-				throw new Error("No GitHub access token found");
-			}
-			return account.accessToken;
+			return await getAccessTokenByUserId(userId);
 		});
 
 		const context = await step.run("retrieve-context", async () => {

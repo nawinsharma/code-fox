@@ -13,6 +13,7 @@
  */
 import { inngest } from "../client";
 import {
+	getAccessTokenByUserId,
 	getPullRequestDiff,
 	postReviewComment,
 } from "@/modules/github/lib/github";
@@ -55,31 +56,19 @@ export const generateReview = inngest.createFunction(
 	async ({ event, step }) => {
 		const { owner, repo, prNumber, userId, reviewId } = event.data;
 
-		const { diff, title, description, token } = await step.run(
+		const token = await step.run("get-token", async () => {
+			return await getAccessTokenByUserId(userId);
+		});
+
+		const { diff, title, description } = await step.run(
 			"fetch-pr-data",
 			async () => {
-				const account = await prisma.account.findFirst({
-					where: {
-						userId: userId,
-						providerId: "github",
-					},
-				});
-
-				if (!account?.accessToken) {
-					throw new Error("No GitHub access token found");
-				}
-
-				const data = await getPullRequestDiff(
-					account.accessToken,
+				return await getPullRequestDiff(
+					token as string,
 					owner,
 					repo,
 					prNumber
 				);
-
-				return {
-					...data,
-					token: account.accessToken,
-				};
 			}
 		);
 
