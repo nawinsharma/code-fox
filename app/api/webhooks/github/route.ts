@@ -6,8 +6,6 @@ export async function POST(request: NextRequest) {
 		const body = await request.json();
 		const event = request.headers.get("x-github-event");
 
-		console.log(`Received GitHub event: ${event}`);
-
 		if (event === "ping") {
 			return NextResponse.json({ message: "Pong" }, { status: 200 });
 		}
@@ -20,18 +18,7 @@ export async function POST(request: NextRequest) {
 			const [owner, repoName] = repo.split("/");
 
 			if (action === "opened" || action === "synchronize") {
-				reviewPullRequest(owner, repoName, prNumber, prTitle)
-					.then(() =>
-						console.log(
-							`Successfully processed PR ${prNumber} for ${repo}`,
-						),
-					)
-					.catch((error: unknown) =>
-						console.error(
-							`Failed to process PR ${prNumber} for ${repo}:`,
-							error,
-						),
-					);
+				await reviewPullRequest(owner, repoName, prNumber, prTitle);
 			}
 		}
 
@@ -44,18 +31,7 @@ export async function POST(request: NextRequest) {
 			const [owner, repoName] = repo.split("/");
 
 			if (action === "opened") {
-				analyzeIssue(owner, repoName, issueNumber, issueTitle, issueBody)
-					.then(() =>
-						console.log(
-							`Successfully queued issue ${issueNumber} for ${repo}`,
-						),
-					)
-					.catch((error: unknown) =>
-						console.error(
-							`Failed to process issue ${issueNumber} for ${repo}:`,
-							error,
-						),
-					);
+				await analyzeIssue(owner, repoName, issueNumber, issueTitle, issueBody);
 			}
 		}
 

@@ -1,22 +1,14 @@
 "use server";
 
 import prisma from "@/lib/db";
-import { auth } from "@/lib/auth";
 import { getRepositories } from "@/modules/github/lib/github";
-
-import { headers } from "next/headers";
+import { requireSession } from "@/modules/auth/utils/auth-utils";
 
 export const fetchRepositories = async (
 	page: number = 1,
 	perPage: number = 10
 ) => {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	if (!session) {
-		throw new Error("Unauthorized");
-	}
+	const session = await requireSession();
 
 	const githubRepos = await getRepositories(page, perPage);
 
