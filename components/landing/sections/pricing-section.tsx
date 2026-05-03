@@ -124,12 +124,12 @@ export function PricingSection() {
               className={cn(
                 "rounded-xl grid grid-rows-[180px_auto_1fr] relative h-fit min-[650px]:h-full min-[900px]:h-fit",
                 tier.isPopular
-                  ? "md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent"
-                  : "bg-[#F3F4F6] dark:bg-[#F9FAFB]/[0.02] border border-border",
+                  ? "md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent dark:bg-zinc-900"
+                  : "bg-[#F3F4F6] dark:bg-zinc-900/50 border border-border",
               )}
             >
               <div className="flex flex-col gap-4 p-4">
-                <p className="text-sm">
+                <p className="text-sm text-primary">
                   {tier.name}
                   {tier.isPopular && (
                     <span className="bg-gradient-to-b from-primary/70 from-[1.92%] to-primary to-[100%] text-white h-6 inline-flex w-fit items-center justify-center px-2 rounded-full text-sm ml-2 shadow-[0px_6px_6px_-3px_rgba(0,0,0,0.08),0px_3px_3px_-1.5px_rgba(0,0,0,0.08),0px_1px_1px_-0.5px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.12)_inset,0px_1px_0px_0px_rgba(255,255,255,0.12)_inset]">
@@ -139,11 +139,11 @@ export function PricingSection() {
                 </p>
                 <div className="flex items-baseline mt-2">
                   <PriceDisplay tier={tier} />
-                  <span className="ml-2">
+                  <span className="ml-2 dark:text-white/80">
                     /{billingCycle === "yearly" ? "year" : "month"}
                   </span>
                 </div>
-                <p className="text-sm mt-2">{tier.description}</p>
+                <p className="text-sm mt-2 dark:text-white/80">{tier.description}</p>
               </div>
 
               <div className="flex flex-col gap-2 p-4">
@@ -161,13 +161,13 @@ export function PricingSection() {
               <hr className="border-border dark:border-white/20" />
               <div className="p-4">
                 {tier.name !== "Basic" && (
-                  <p className="text-sm mb-4">
+                  <p className="text-sm mb-4 text-primary">
                     Everything in {tier.name === "Pro" ? "Basic" : "Pro"} +
                   </p>
                 )}
                 <ul className="space-y-3">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
+                    <li key={feature} className="flex items-center gap-2 dark:text-white/80">
                       <div
                         className={cn(
                           "size-5 rounded-full border border-primary/20 flex items-center justify-center",

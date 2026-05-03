@@ -34,10 +34,10 @@ export function BentoSection() {
                 {item.content}
               </div>
               <div className="flex-1 flex-col gap-2 p-6">
-                <h3 className="text-lg tracking-tighter font-semibold">
+                <h3 className="text-lg tracking-tighter font-semibold text-primary">
                   {item.title}
                 </h3>
-                <p className="text-muted-foreground">{item.description}</p>
+                <p className="text-muted-foreground dark:text-white/80">{item.description}</p>
               </div>
             </div>
           ))}
