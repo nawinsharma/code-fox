@@ -36,11 +36,11 @@ export function FAQSection() {
               value={index.toString()}
               className="border-0 grid gap-2"
             >
-              <AccordionTrigger className="border bg-accent border-border rounded-lg px-4 py-3.5 cursor-pointer no-underline hover:no-underline data-[state=open]:ring data-[state=open]:ring-primary/20">
+              <AccordionTrigger className="border bg-accent dark:bg-zinc-900 border-border rounded-lg px-4 py-3.5 cursor-pointer no-underline hover:no-underline data-[state=open]:ring data-[state=open]:ring-primary/20">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="p-3 border rounded-lg bg-accent">
-                <p className="text-foreground/80 font-medium leading-relaxed">
+              <AccordionContent className="p-3 border rounded-lg bg-accent dark:bg-zinc-900">
+                <p className="text-foreground dark:text-white/80 font-medium leading-relaxed">
                   {faq.answer}
                 </p>
               </AccordionContent>

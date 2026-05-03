@@ -34,10 +34,10 @@ export function GrowthSection() {
               className="flex flex-col items-start justify-end gap-2 p-6 min-h-[500px]"
             >
               {item.content}
-              <h3 className="text-lg tracking-tighter font-semibold">
+              <h3 className="text-lg tracking-tighter font-semibold text-primary">
                 {item.title}
               </h3>
-              <p className="text-muted-foreground">{item.description}</p>
+              <p className="text-muted-foreground dark:text-white/80">{item.description}</p>
             </div>
           ))}
         </div>

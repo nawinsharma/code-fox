@@ -96,16 +96,12 @@ export function HeroVideoDialog({
           <div className="w-full aspect-video bg-background rounded-2xl" />
         )}
         <div className="absolute isolate inset-0 flex scale-[0.9] items-center justify-center rounded-2xl transition-all duration-200 ease-out group-hover:scale-100">
-          <div className="flex size-28 items-center justify-center rounded-full bg-gradient-to-t from-secondary/20 to-[#ACC3F7/15] backdrop-blur-md">
+          <div className="flex size-28 items-center justify-center rounded-full bg-gradient-to-t from-zinc-800/80 to-zinc-900/60 backdrop-blur-md dark:from-zinc-700/40 dark:to-zinc-800/20">
             <div
-              className={`relative flex size-20 scale-100 items-center justify-center rounded-full bg-gradient-to-t from-secondary to-white/10 shadow-md transition-all duration-200 ease-out group-hover:scale-[1.2]`}
+              className={`relative flex size-20 scale-100 items-center justify-center rounded-full bg-gradient-to-t from-zinc-600 to-zinc-800 shadow-md transition-all duration-200 ease-out group-hover:scale-[1.2]`}
             >
               <Play
                 className="size-8 scale-100 fill-white text-white transition-transform duration-200 ease-out group-hover:scale-105"
-                style={{
-                  filter:
-                    "drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06))",
-                }}
               />
             </div>
           </div>

@@ -334,10 +334,10 @@ export const Feature = ({
                       }}
                     />
                   </div>
-                  <AccordionTrigger className="font-semibold text-lg tracking-tight text-left">
+                  <AccordionTrigger className="font-semibold text-lg tracking-tight text-left text-primary">
                     {item.title}
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm font-medium">
+                  <AccordionContent className="text-sm font-medium text-muted-foreground dark:text-white/80">
                     {item.content}
                   </AccordionContent>
                 </AccordionItem>

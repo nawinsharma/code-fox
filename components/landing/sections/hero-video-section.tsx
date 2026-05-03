@@ -8,14 +8,14 @@ export function HeroVideoSection() {
           className="block dark:hidden"
           animationStyle="from-center"
           videoSrc="https://www.youtube.com/embed/13I9T38YeuA"
-          // thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
+          thumbnailSrc="https://img.youtube.com/vi/13I9T38YeuA/maxresdefault.jpg"
           thumbnailAlt="Hero Video"
         />
         <HeroVideoDialog
           className="hidden dark:block"
           animationStyle="from-center"
           videoSrc="https://www.youtube.com/embed/13I9T38YeuA"
-          // thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
+          thumbnailSrc="https://img.youtube.com/vi/13I9T38YeuA/maxresdefault.jpg"
           thumbnailAlt="Hero Video"
         />
       </div>

@@ -17,7 +17,7 @@ export function FooterSection() {
             <Icons.logo className="size-10" />
             <p className="text-xl font-semibold text-primary">Code Fox</p>
           </Link>
-          <p className="tracking-tight text-muted-foreground font-medium">
+          <p className="tracking-tight text-muted-foreground dark:text-white/80 font-medium">
             {siteConfig.hero.description}
           </p>
           <div className="flex items-center gap-2 dark:hidden">
@@ -41,7 +41,7 @@ export function FooterSection() {
                 {column.links.map((link) => (
                   <li
                     key={link.id}
-                    className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[15px]/snug text-muted-foreground"
+                    className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[15px]/snug text-muted-foreground dark:text-white/80"
                   >
                     <Link href={link.url}>{link.title}</Link>
                     <div className="flex size-4 items-center justify-center border border-border rounded translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
