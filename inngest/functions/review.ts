@@ -21,7 +21,7 @@ import { retrieveContext } from "@/modules/ai/lib/rag";
 import prisma from "@/lib/db";
 
 import { generateText } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
+import { google } from "@ai-sdk/google";
 
 /**
  * Inngest function to generate an AI code review for a Pull Request.
@@ -112,7 +112,7 @@ Please provide:
 Format your response in markdown.`;
 
 			const { text } = await generateText({
-				model: anthropic("claude-sonnet-4-6"),
+				model: google("gemini-2.5-flash"),
 				prompt,
 			});
 

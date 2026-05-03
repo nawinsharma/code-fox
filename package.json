@@ -10,7 +10,6 @@
 		"postinstall": "prisma generate"
 	},
 	"dependencies": {
-		"@ai-sdk/anthropic": "^3.0.69",
 		"@ai-sdk/google": "^3.0.62",
 		"@ai-sdk/react": "^3.0.160",
 		"@hookform/resolvers": "^5.2.2",

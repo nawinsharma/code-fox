@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 import { Octokit } from "octokit";
 
 import { generateText } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
+import { google } from "@ai-sdk/google";
 
 export const autoPRJob = inngest.createFunction(
 	{ id: "auto-pr-generation", concurrency: 3, triggers: [{ event: "issue.auto-pr" }] },
@@ -55,7 +55,7 @@ Example:
 [{"path": "src/utils.ts", "action": "modify", "description": "Add null check in processData function"}]`;
 
 			const { text } = await generateText({
-				model: anthropic("claude-sonnet-4-6-20250514"),
+				model: google("gemini-2.5-flash"),
 				prompt,
 			});
 
@@ -139,7 +139,7 @@ ${existingContent ? `Current file content:\n\`\`\`\n${existingContent}\n\`\`\`` 
 Return ONLY the complete file content, no markdown fencing, no explanation.`;
 
 				const { text: fileContent } = await generateText({
-					model: anthropic("claude-sonnet-4-6-20250514"),
+					model: google("gemini-2.5-flash"),
 					prompt: generatePrompt,
 				});
 

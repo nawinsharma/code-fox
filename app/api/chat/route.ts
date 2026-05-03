@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import prisma from "@/lib/db";
 import { PLAN_LIMITS, type PlanType } from "@/lib/plan-limits";
 import { streamText, UIMessage, convertToModelMessages } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
+import { google } from "@ai-sdk/google";
 import { retrieveContext } from "@/modules/ai/lib/rag";
 
 export async function POST(req: NextRequest) {
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
 		const modelMessages = await convertToModelMessages(messages);
 
 		const result = streamText({
-			model: anthropic("claude-sonnet-4-6-20250514"),
+			model: google("gemini-2.5-flash"),
 			system: `You are CodeFox AI, a helpful coding assistant that answers questions about the user's codebase.${repo ? ` The user's repository is ${repo.fullName}.` : ""} Be concise, accurate, and reference specific files/functions when possible. Use markdown formatting for code blocks and structured answers.${context}`,
 			messages: modelMessages,
 			onFinish: async () => {
