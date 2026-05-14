@@ -101,6 +101,8 @@ Please provide:
    - **DO NOT** use special characters like parentheses \`()\`, slashes \`/\`, dots \`.\`, brackets \`[]\`, or braces \`{}\` in participant names or message labels. Use only alphanumeric characters and spaces.
    - Example of a GOOD label: \`Process Payment Request\`
    - Example of a BAD label: \`processPayment(data)\`
+   - **ONLY use these valid arrow types**: \`->>\` (solid), \`-->>\` (dotted), \`->\` (solid open), \`-->\` (dotted open), \`<<->>\` (bidirectional solid), \`<<-->>\` (bidirectional dotted).
+   - **NEVER use** \`<->>\` — it is invalid and causes parse errors.
    - Keep the diagram focused on the core logic changes.
    - If a diagram is not helpful for these changes, omit this section entirely.
 3. **Summary**: Brief overview.
@@ -116,7 +118,10 @@ Format your response in markdown.`;
 				prompt,
 			});
 
-			return text;
+			// Fix invalid Mermaid arrows the AI sometimes generates (e.g. <->> is not valid; <<->> is)
+			const sanitized = text.replace(/(?<!<)<->>/g, "<<->>");
+
+			return sanitized;
 		});
 
 		await step.run("post-comment", async () => {
